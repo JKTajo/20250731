@@ -23,7 +23,8 @@ if not csv_file:
     st.stop()
 
 # ✅ 데이터 불러오기
-df = pd.read_csv(csv_file)
+# 데이터 읽기 (인코딩 지정)
+df = pd.read_csv(csv_file, encoding='ISO-8859-1')
 
 # ✅ 사이드바
 st.sidebar.title("🚲 서울 자전거 수요 예측")
