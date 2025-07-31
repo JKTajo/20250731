@@ -1,4 +1,5 @@
+streamlit
+kagglehub[pandas-datasets]
 pandas
 matplotlib
 seaborn
-requests
