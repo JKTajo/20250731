@@ -1,38 +1,66 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import requests
 
-# Load the dataframe with 'cp949' encoding.
+# Install a Korean font
+# This part is for Colab. If running locally and the font is already installed, you can comment this out.
+!sudo apt-get install -y fonts-nanum
+!sudo fc-cache -fv
+!rm ~/.cache/matplotlib -rf
+
+# Set the font to a Korean font
+# After running this, you might need to restart the runtime in Colab.
+plt.rc('font', family='NanumBarunGothic')
+plt.rcParams['axes.unicode_minus'] = False # Fix for minus sign not showing up
+
+# URL of the dataset
+url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00560/SeoulBikeData.csv'
+
+# Send a GET request to the URL
+response = requests.get(url)
+
+# Check if the request was successful
+if response.status_code == 200:
+    # Write the content of the response to a file
+    with open('SeoulBikeData.csv', 'wb') as f:
+        f.write(response.content)
+    print("파일이 성공적으로 다운로드되었습니다.")
+else:
+    print(f"파일 다운로드 실패. 상태 코드: {response.status_code}")
+
+# Load the dataframe using 'cp949' encoding
 try:
     df = pd.read_csv('SeoulBikeData.csv', encoding='cp949')
 except UnicodeDecodeError:
-    df = pd.read_csv('SeoulBikeData.csv', encoding='euc-kr')
+    print("'cp949'로 디코딩하지 못했습니다. 'latin1'으로 다시 시도합니다.")
+    df = pd.read_csv('SeoulBikeData.csv', encoding='latin1')
 
 
-# Display the first few rows of the dataframe.
-print('Original DataFrame:')
+# Display the first few rows of the dataframe
+print('\n원본 데이터프레임:')
 display(df.head())
 
-# Sort the dataframe by 'Rented Bike Count'.
+# Sort the dataframe by 'Rented Bike Count'
 df_sorted = df.sort_values(by='Rented Bike Count')
 
-# Display the sorted dataframe.
-print('\nDataFrame sorted by Rented Bike Count:')
+# Display the sorted dataframe
+print('\n대여된 자전거 수로 정렬된 데이터프레임:')
 display(df_sorted.head())
 
 # Create a histogram for 'Rented Bike Count'
 plt.figure(figsize=(10, 6))
 sns.histplot(df['Rented Bike Count'], bins=50, kde=True)
-plt.title('Distribution of Rented Bike Count')
-plt.xlabel('Rented Bike Count')
-plt.ylabel('Frequency')
+plt.title('대여된 자전거 수의 분포')
+plt.xlabel('대여된 자전거 수')
+plt.ylabel('빈도')
 plt.show()
 
 # Create a box plot for 'Rented Bike Count'
 plt.figure(figsize=(10, 6))
 sns.boxplot(x=df['Rented Bike Count'])
-plt.title('Box Plot of Rented Bike Count')
-plt.xlabel('Rented Bike Count')
+plt.title('대여된 자전거 수의 상자 그림')
+plt.xlabel('대여된 자전거 수')
 plt.show()
 
 # Calculate the average 'Rented Bike Count' for each hour
@@ -41,10 +69,10 @@ average_bike_count_by_hour = df.groupby('Hour')['Rented Bike Count'].mean()
 # Create a line plot of the average bike counts per hour
 plt.figure(figsize=(12, 6))
 sns.lineplot(x=average_bike_count_by_hour.index, y=average_bike_count_by_hour.values)
-plt.title('Average Rented Bike Count by Hour')
-plt.xlabel('Hour')
-plt.ylabel('Average Rented Bike Count')
-plt.xticks(average_bike_count_by_hour.index) # Ensure all hours are shown on the x-axis
+plt.title('시간대별 평균 대여 자전거 수')
+plt.xlabel('시간')
+plt.ylabel('평균 대여 자전거 수')
+plt.xticks(average_bike_count_by_hour.index)
 plt.grid(True)
 plt.show()
 
@@ -57,20 +85,16 @@ daily_rentals = df.groupby('Date')['Rented Bike Count'].sum()
 # Create a time series plot
 plt.figure(figsize=(15, 7))
 daily_rentals.plot()
-plt.title('Total Rented Bike Count by Date')
-plt.xlabel('Date')
-plt.ylabel('Total Rented Bike Count')
+plt.title('날짜별 총 대여 자전거 수')
+plt.xlabel('날짜')
+plt.ylabel('총 대여 자전거 수')
 plt.grid(True)
 plt.show()
 
 # Create a box plot to compare 'Rented Bike Count' across different 'Seasons'
 plt.figure(figsize=(10, 6))
 sns.boxplot(x='Seasons', y='Rented Bike Count', data=df)
-
-# Add titles and labels
-plt.title('Rented Bike Count by Season')
-plt.xlabel('Season')
-plt.ylabel('Rented Bike Count')
-
-# Display the plot
+plt.title('계절별 대여 자전거 수')
+plt.xlabel('계절')
+plt.ylabel('대여 자전거 수')
 plt.show()
