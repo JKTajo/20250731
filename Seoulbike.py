@@ -3,14 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import requests
 
-# Install a Korean font
-# This part is for Colab. If running locally and the font is already installed, you can comment this out.
-!sudo apt-get install -y fonts-nanum
-!sudo fc-cache -fv
-!rm ~/.cache/matplotlib -rf
-
-# Set the font to a Korean font
-# After running this, you might need to restart the runtime in Colab.
+# Set the font to a Korean font that is already installed on your system
+# You might need to change 'NanumBarunGothic' to the actual name of the font you have installed
 plt.rc('font', family='NanumBarunGothic')
 plt.rcParams['axes.unicode_minus'] = False # Fix for minus sign not showing up
 
@@ -36,17 +30,16 @@ except UnicodeDecodeError:
     print("'cp949'로 디코딩하지 못했습니다. 'latin1'으로 다시 시도합니다.")
     df = pd.read_csv('SeoulBikeData.csv', encoding='latin1')
 
-
 # Display the first few rows of the dataframe
 print('\n원본 데이터프레임:')
-display(df.head())
+print(df.head())
 
 # Sort the dataframe by 'Rented Bike Count'
 df_sorted = df.sort_values(by='Rented Bike Count')
 
 # Display the sorted dataframe
 print('\n대여된 자전거 수로 정렬된 데이터프레임:')
-display(df_sorted.head())
+print(df_sorted.head())
 
 # Create a histogram for 'Rented Bike Count'
 plt.figure(figsize=(10, 6))
