@@ -4,7 +4,7 @@ import seaborn as sns
 
 # Load the dataframe with 'cp949' encoding.
 try:
-    df = pd.read_csv('SeoulBikeData.csv', encoding='cp494')
+    df = pd.read_csv('SeoulBikeData.csv', encoding='cp949')
 except UnicodeDecodeError:
     df = pd.read_csv('SeoulBikeData.csv', encoding='euc-kr')
 
