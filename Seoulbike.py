@@ -4,6 +4,9 @@ import seaborn as sns
 import requests
 import sys
 
+# This script uses only standard Python and default fonts.
+# No terminal commands or font downloads are needed.
+
 # URL of the dataset
 url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00560/SeoulBikeData.csv'
 
@@ -11,31 +14,32 @@ url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00560/SeoulBike
 print("Downloading the dataset...")
 try:
     response = requests.get(url)
-    response.raise_for_status() # Raise an exception for bad status codes
+    response.raise_for_status() # This will check for download errors
 except requests.exceptions.RequestException as e:
-    print(f"Error downloading the file: {e}")
-    sys.exit()
+    print(f"Failed to download the file. Error: {e}")
+    sys.exit() # Exit if the download fails
 
-# Write the content to a file
+# Save the downloaded content to a local file
 with open('SeoulBikeData.csv', 'wb') as f:
     f.write(response.content)
 print("File downloaded successfully.")
 
-# Load the dataframe
+# Load the dataframe from the local file
 try:
+    # 'latin1' encoding is used as it's a safe default for this dataset
     df = pd.read_csv('SeoulBikeData.csv', encoding='latin1')
 except FileNotFoundError:
-    print("Error: SeoulBikeData.csv not found.")
+    print("Error: The file 'SeoulBikeData.csv' was not found.")
     sys.exit()
 except Exception as e:
-    print(f"An error occurred while reading the CSV file: {e}")
+    print(f"An error occurred while reading the file: {e}")
     sys.exit()
 
-# Display the first few rows of the dataframe
+# Display the first few rows to confirm it loaded correctly
 print('\nOriginal DataFrame:')
 print(df.head())
 
-# --- Visualizations ---
+# --- Visualizations using standard fonts ---
 print("\nGenerating visualizations...")
 
 # Histogram
@@ -60,7 +64,7 @@ sns.lineplot(x=average_bike_count_by_hour.index, y=average_bike_count_by_hour.va
 plt.title('Average Rented Bike Count by Hour')
 plt.xlabel('Hour')
 plt.ylabel('Average Rented Bike Count')
-plt.xticks(average_bike_count_by_hour.index)
+plt.xticks(range(0, 24)) # Set ticks for all 24 hours
 plt.grid(True)
 plt.show()
 
@@ -83,4 +87,4 @@ plt.xlabel('Season')
 plt.ylabel('Rented Bike Count')
 plt.show()
 
-print("\nAll tasks completed.")
+print("\nScript finished successfully.")
